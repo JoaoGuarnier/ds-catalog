@@ -1,5 +1,6 @@
 package com.devsuperior.dscatalog.model;
 
+import com.devsuperior.dscatalog.dto.CategoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,7 @@ public class Category implements Serializable {
     private String name;
 
 
-
+    public Category(CategoryDTO dto) {
+        this.name = dto.getName();
+    }
 }
