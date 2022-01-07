@@ -4,7 +4,6 @@ import com.devsuperior.dscatalog.dto.CategoryDTO;
 import com.devsuperior.dscatalog.model.Category;
 import com.devsuperior.dscatalog.repository.CategoryRepository;
 import com.devsuperior.dscatalog.service.exception.EntityNotFoundException;
-import org.hibernate.action.internal.EntityActionVetoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,5 +41,17 @@ public class CategoryService {
         Category entity = new Category(dto);
         Category saveEntity = categoryRepository.save(entity);
         return new CategoryDTO(saveEntity);
+    }
+
+    @Transactional
+    public CategoryDTO update(CategoryDTO dto, Long id) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        Category entity = optionalCategory.orElseThrow(() -> new EntityNotFoundException("Entity not found " + id));
+        entity.setName(dto.getName());
+        entity = categoryRepository.save(entity);
+
+        return new CategoryDTO(entity);
+
+
     }
 }
