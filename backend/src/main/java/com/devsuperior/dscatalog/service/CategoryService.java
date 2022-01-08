@@ -1,10 +1,14 @@
 package com.devsuperior.dscatalog.service;
 
+import com.devsuperior.dscatalog.controller.exceptions.ControllerExceptionHandler;
 import com.devsuperior.dscatalog.dto.CategoryDTO;
 import com.devsuperior.dscatalog.model.Category;
 import com.devsuperior.dscatalog.repository.CategoryRepository;
-import com.devsuperior.dscatalog.service.exception.EntityNotFoundException;
+import com.devsuperior.dscatalog.service.exception.DatabaseException;
+import com.devsuperior.dscatalog.service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +33,7 @@ public class CategoryService {
 
         Optional<Category> optionalCategory = categoryRepository.findById(id);
 
-        Category category = optionalCategory.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+        Category category = optionalCategory.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 
         CategoryDTO categoryDTO = new CategoryDTO(category);
 
@@ -46,12 +50,24 @@ public class CategoryService {
     @Transactional
     public CategoryDTO update(CategoryDTO dto, Long id) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
-        Category entity = optionalCategory.orElseThrow(() -> new EntityNotFoundException("Entity not found " + id));
+        Category entity = optionalCategory.orElseThrow(() -> new ResourceNotFoundException("Entity not found " + id));
         entity.setName(dto.getName());
         entity = categoryRepository.save(entity);
 
         return new CategoryDTO(entity);
 
+
+    }
+
+    public void delete(Long id) {
+
+        try {
+            categoryRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new DatabaseException("Id not found " + id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Integrity violation");
+        }
 
     }
 }
