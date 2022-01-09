@@ -32,15 +32,15 @@ public class ProductController {
         return ResponseEntity.ok().body(productDTO);
     }
 
-//    @PostMapping
-//    public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO dto) {
-//        dto = productService.save(dto);
-//
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-//                .buildAndExpand(dto.getId()).toUri();
-//
-//        return ResponseEntity.created(uri).body(dto);
-//    }
+    @PostMapping
+    public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO dto) {
+        dto = productService.save(dto);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(dto.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(dto);
+    }
 
 
     @PutMapping("/{id}")

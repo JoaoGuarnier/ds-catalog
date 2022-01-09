@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,20 +47,22 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO save(CategoryDTO dto) {
-        Category entity = new Category(dto);
-        Category saveEntity = categoryRepository.save(entity);
-        return new CategoryDTO(saveEntity);
+        Category entity = new Category();
+        copyDtoToEntity(dto, entity);
+        entity = categoryRepository.save(entity);
+        return new CategoryDTO(entity);
     }
 
     @Transactional
     public CategoryDTO update(CategoryDTO dto, Long id) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        Category entity = optionalCategory.orElseThrow(() -> new ResourceNotFoundException("Entity not found " + id));
-        entity.setName(dto.getName());
-        entity = categoryRepository.save(entity);
-
-        return new CategoryDTO(entity);
-
+        try {
+            Category entity = categoryRepository.getById(id);
+            copyDtoToEntity(dto, entity);
+            entity = categoryRepository.save(entity);
+            return new CategoryDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Id not found " + id);
+        }
 
     }
 
@@ -73,5 +76,9 @@ public class CategoryService {
             throw new DatabaseException("Integrity violation");
         }
 
+    }
+
+    private void copyDtoToEntity(CategoryDTO dto, Category entity) {
+        entity.setName(dto.getName());
     }
 }

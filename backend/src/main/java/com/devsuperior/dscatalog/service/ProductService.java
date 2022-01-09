@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(Pageable pageable) {
@@ -42,21 +46,24 @@ public class ProductService {
         return productDTO;
     }
 
-//    @Transactional
-//    public ProductDTO save(ProductDTO dto) {
-//        Product entity = new Product(dto);
-//        Product saveEntity = productRepository.save(entity);
-//        return new ProductDTO(saveEntity);
-//    }
+    @Transactional
+    public ProductDTO save(ProductDTO dto) {
+        Product entity = new Product();
+        copyDtoToEntity(dto, entity);
+        entity = productRepository.save(entity);
+        return new ProductDTO(entity, entity.getCategories());
+    }
 
     @Transactional
     public ProductDTO update(ProductDTO dto, Long id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        Product entity = optionalProduct.orElseThrow(() -> new ResourceNotFoundException("Entity not found " + id));
-        entity.setName(dto.getName());
-        entity = productRepository.save(entity);
-
-        return new ProductDTO(entity);
+        try {
+            Product entity = productRepository.getById(id);
+            copyDtoToEntity(dto, entity);
+            entity = productRepository.save(entity);
+            return new ProductDTO(entity, entity.getCategories());
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Id not found " + id);
+        }
 
 
     }
@@ -72,4 +79,22 @@ public class ProductService {
         }
 
     }
+
+    private void copyDtoToEntity(ProductDTO dto, Product entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setDate(dto.getDate());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+
+        entity.getCategories().clear();
+
+        for (CategoryDTO categoryDTO : dto.getCategories()) {
+            Category category = categoryRepository.getById(categoryDTO.getId());
+            entity.getCategories().add(category);
+        }
+
+
+    }
+
 }

@@ -37,8 +37,4 @@ public class Category implements Serializable {
         updatedAt = Instant.now();
     }
 
-
-    public Category(CategoryDTO dto) {
-        this.name = dto.getName();
-    }
 }
