@@ -85,7 +85,7 @@ public class ProductServiceTests {
     }
 
     @Test
-    public void updateShouldThrowEntityNotFoundExceptionWhenIdDoesNotExist() {
+    public void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
            productService.update(productDto, nonExistingId);
         });
@@ -108,7 +108,6 @@ public class ProductServiceTests {
 
     @Test
     public void findAllPagedShouldReturnPage() {
-
         Pageable pageable = PageRequest.of(0,10);
         Page<ProductDTO> result = productService.findAll(pageable);
         Assertions.assertNotNull(result);
