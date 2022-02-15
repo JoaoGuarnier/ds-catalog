@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +19,10 @@ import java.util.stream.Collectors;
 public class UserDTO implements Serializable {
 
     private Long id;
+    @NotBlank(message = "Campo obrigatório")
     private String firstName;
     private String lastName;
+    @Email(message = "Favor inserir um email válido")
     private String email;
 
     private List<RoleDTO> roles = new ArrayList<>();
