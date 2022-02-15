@@ -2,17 +2,20 @@ package com.devsuperior.dscatalog.controller.exceptions;
 
 import com.devsuperior.dscatalog.service.exception.DatabaseException;
 import com.devsuperior.dscatalog.service.exception.ResourceNotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 
 @ControllerAdvice
-public class ControllerExceptionHandler {
-
+public class ControllerExceptionHandler{
 
 
     @ExceptionHandler(ResourceNotFoundException.class)
