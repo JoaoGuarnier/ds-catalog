@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ValidationError extends StandardError{
+public class ValidationError extends StandardError implements Serializable {
 
     private List<FieldMessage> errors = new ArrayList<>();
 
