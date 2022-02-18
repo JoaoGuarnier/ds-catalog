@@ -19,10 +19,8 @@ import java.util.stream.Collectors;
 public class UserDTO implements Serializable {
 
     private Long id;
-    @NotBlank(message = "Campo obrigatório")
     private String firstName;
     private String lastName;
-    @Email(message = "Favor inserir um email válido")
     private String email;
 
     private List<RoleDTO> roles = new ArrayList<>();
